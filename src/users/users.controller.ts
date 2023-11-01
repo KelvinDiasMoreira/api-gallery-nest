@@ -1,34 +1,34 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, HttpCode } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UserInterface } from './users.entity';
+import { CreateUserDTO } from './dto/create-user.dto';
 
-@Controller('tasks')
+@Controller('users')
 export class UsersController {
-    constructor(private readonly tasksService: UsersService){}
+    constructor(private readonly usersService: UsersService){}
 
     @Get()
     getAllTasks(){
-        return this.tasksService.getAllTasks(); 
+        return this.usersService.getAllUsers(); 
     }
 
     @Get(':id')
     getTaskById(@Param('id') id:number){
-        return this.tasksService.getTaskById(+id)
+        return this.usersService.getUserById(id)
     }
 
     @Post('create')
-    createTask(@Body() body: UserInterface){
-        return this.tasksService.createTask(body);
+    createTask(@Body() createUserDTO: CreateUserDTO){
+        return this.usersService.createUser(createUserDTO);
     }
 
     @Patch('edit/:id')
-    editTask(@Body() body: UserInterface, @Param('id') id:number){
-        return this.tasksService.editTask(body, +id);
+    editTask(@Body() updateUserDTO: CreateUserDTO, @Param('id') id:number){
+        return this.usersService.editUser(updateUserDTO, id);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete('delete/:id')
     deletetask(@Param('id') id:number){
-        return this.tasksService.deleteTask(id);
+        return this.usersService.deleteUser(id);
     }
 }
