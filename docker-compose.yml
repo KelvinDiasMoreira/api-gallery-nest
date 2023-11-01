@@ -1,0 +1,30 @@
+
+
+
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    build: .
+    container_name: gallery-api
+    ports:
+      - '5432:5432'
+    volumes:
+      - .docker/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=gallery-api
+
+# services:
+#   db:
+#     image: postgres
+#     restart: always
+#     environment:
+#       - POSTGRES_PASSWORD=postgres
+#       - POSTGRES_DB=userapi-db
+#     ports:
+#       - '5432:5432'
+#     volumes: 
+#       - .docker/db:/var/lib/postgresql/data
