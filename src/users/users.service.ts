@@ -1,75 +1,47 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+
+import { GetUserByIdUseCase } from './use-cases/get-user-by-id.use-case';
+import { GetAllUsersUseCase } from './use-cases/get-all-users.use-case';
+import { DeleteUserUseCase } from './use-cases/delete-user.use-case';
+import { CreateUserUseCase } from './use-cases/create-user.use-case';
+import { EditUserUseCase } from './use-cases/edit-user.use-case';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
-import * as bcrypt from "bcrypt"
 
 @Injectable()
 export class UsersService {
-    constructor(private readonly prisma: PrismaService) { }
+  @Inject(CreateUserUseCase)
+  private createUserUseCase: CreateUserUseCase;
 
-    async getAllUsers() {
-        return this.prisma.user.findMany();
-    }
+  @Inject(GetAllUsersUseCase)
+  private getAllUsersUseCase: GetAllUsersUseCase;
 
-    async getUserById(id: number) {
-        return this.prisma.user.findUnique({ where: { id } })
-    }
+  @Inject(GetUserByIdUseCase)
+  private getUserByIdUseCase: GetUserByIdUseCase;
 
-    async createUser(createUserDTO: CreateUserDTO) {
-        const { name, password, email, login } = createUserDTO;
+  @Inject(EditUserUseCase)
+  private editUserUseCase: EditUserUseCase;
 
-        let userExist = await this.prisma.user.findMany({
-            where: {
-                OR: [
-                    {email},
-                    {login}
-                ]
-            }
-        });
+  @Inject(DeleteUserUseCase)
+  private deleteUserUseCase: DeleteUserUseCase;
 
-        if (userExist.length) throw new ConflictException("User already exist");
+  async getAllUsers() {
+    return this.getAllUsersUseCase.getAllUsers();
+  }
 
-        const passwordHashed = await this.encriptPw(password);
+  async getUserById(id: number) {
+    return this.getUserByIdUseCase.getUserById(id);
+  }
 
-        const user = await this.prisma.user.create({
-            data: {
-                name,
-                login,
-                password: passwordHashed,
-                email
-            }
-        })
-        return user;
-    }
+  async createUser(createUserDTO: CreateUserDTO) {
+    return this.createUserUseCase.createUser(createUserDTO);
+  }
 
-    editUser(updateUserDTO: UpdateUserDTO, id: number) {
+  async editUser(updateUserDTO: UpdateUserDTO, id: number) {
+    return this.editUserUseCase.editUser(updateUserDTO, id);
+  }
 
-        // let indexToSearchAndEdit = this.tasks.findIndex(task=>task.id === id);
-        // if(!indexToSearchAndEdit){
-        //     throw new HttpException("Tarefa não existe", HttpStatus.NOT_FOUND);  
-        // } 
-        // this.tasks[indexToSearchAndEdit] = {
-        //     id,
-        //     ...body
-        // }
-        // return {
-        //     response: `Task com o id ${id} editada com sucesso`
-        // }
-    }
-
-    deleteUser(id: number) {
-        // let indexToEdit = this.tasks.findIndex(task=>task.id === id);
-        // this.tasks.splice(indexToEdit, 1);
-        // return 
-    }
-
-    private encriptPw = async (pw: string) => {
-        const rounds = 5
-        const salt = await bcrypt.genSalt(rounds);
-        const pwHash = await bcrypt.hash(pw, salt)
-        return pwHash
-    }
-
-
+  async deleteUser(id: number) {
+    return this.deleteUserUseCase.deleteUser(id);
+  }
 }

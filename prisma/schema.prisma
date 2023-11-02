@@ -1,16 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// DATABASE_URL="postgresql://postgres:postgres@localhost:5432/gallery-api?schema=public"
-// HASH_JWT = "8b0d65a316a17f6d26eaafd957d7f961"
-// # // name used to hash = apigalleryBDAplication
-
-
-
-
-
-
-
 generator client {
   provider = "prisma-client-js"
 }
