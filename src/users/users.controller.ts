@@ -8,37 +8,55 @@ import {
   Patch,
   Post,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+// import { UsersService } from './users.service';
 import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdatePasswordUserDTO } from './dto/update-user-password.dto';
+import { GetUserByIdUseCase } from './use-cases/get-user-by-id.use-case';
+import { GetAllUsersUseCase } from './use-cases/get-all-users.use-case';
+import { EditUserPasswordUseCase } from './use-cases/edit-user-password.use-case';
+import { CreateUserUseCase } from './use-cases/create-user.use-case';
+import { DeleteUserUseCase } from './use-cases/delete-user.use-case';
+import { AuthGuard } from 'src/auth/auth.guard';
 
-@Controller('users')
+@Controller()
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private getUserByIdUseCase: GetUserByIdUseCase,
+    private getAllUsersUseCase: GetAllUsersUseCase,
+    private editUserPasswordUseCase: EditUserPasswordUseCase,
+    private deleteUserUseCase: DeleteUserUseCase,
+    private createUserUseCase: CreateUserUseCase,
+    ) {}
 
-  @Get()
+  @UseGuards(AuthGuard)
+  @Get('users')
   getAllUsers() {
-    return this.usersService.getAllUsers();
+    return this.getAllUsersUseCase.getAllUsers();
   }
 
-  @Get(':id')
+  @UseGuards(AuthGuard)
+  @Get('users/:id')
   getUserById(@Param('id') id: number) {
-    return this.usersService.getUserById(id);
+    return this.getUserByIdUseCase.getUserById(id);
   }
 
   @Post('create')
   createUser(@Body() createUserDTO: CreateUserDTO) {
-    return this.usersService.createUser(createUserDTO);
+    return this.createUserUseCase.createUser(createUserDTO);
   }
 
-  @Patch('edit/:id')
-  editUser(@Body() updateUserDTO: CreateUserDTO, @Param('id') id: number) {
-    return this.usersService.editUser(updateUserDTO, id);
+  @UseGuards(AuthGuard)
+  @Patch('edit/user/password/:id')
+  editUser(@Body() updatePasswordUserDTO: UpdatePasswordUserDTO, @Param('id') id: number) {
+    return this.editUserPasswordUseCase.editUserPassword(updatePasswordUserDTO, id);
   }
 
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('delete/:id')
   deleteUser(@Param('id') id: number) {
-    return this.usersService.deleteUser(id);
+    return this.deleteUserUseCase.deleteUser(id);
   }
 }

@@ -3,8 +3,7 @@ import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class DeleteUserUseCase {
-  @Inject(PrismaService)
-  private prisma: PrismaService;
+  constructor(private prisma: PrismaService){}
 
   async deleteUser(id: number) {
     const userToDeleteExist = await this.prisma.user.findUnique({

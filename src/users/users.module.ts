@@ -1,24 +1,22 @@
 import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { PrismaService } from 'src/database/prisma.service';
 import { CreateUserUseCase } from './use-cases/create-user.use-case';
 import { GetAllUsersUseCase } from './use-cases/get-all-users.use-case';
 import { GetUserByIdUseCase } from './use-cases/get-user-by-id.use-case';
-import { EditUserUseCase } from './use-cases/edit-user.use-case';
 import { DeleteUserUseCase } from './use-cases/delete-user.use-case';
+import { DatabaseModule } from 'src/database/database.module';
+import { EditUserPasswordUseCase } from './use-cases/edit-user-password.use-case';
 
 @Module({
+    imports: [DatabaseModule],
     controllers: [UsersController],
     providers: [
-        UsersService,
-        PrismaService,
         CreateUserUseCase,
         GetAllUsersUseCase,
         GetUserByIdUseCase,
-        EditUserUseCase,
-        DeleteUserUseCase
+        EditUserPasswordUseCase,
+        DeleteUserUseCase,
     ],
-    exports: [UsersModule]
+    exports: []
 })
 export class UsersModule { }

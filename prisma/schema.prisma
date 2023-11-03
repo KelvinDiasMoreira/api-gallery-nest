@@ -11,11 +11,28 @@ datasource db {
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
-  login String  @unique
-  name  String 
-  password String
-  email String  @unique
-  createdAt DateTime @default(now())
+  id        Int       @id @default(autoincrement())
+  login     String    @unique
+  name      String
+  password  String
+  email     String    @unique
+  createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
+
+  images Image[]
+
+  @@map("user")
+}
+
+model Image {
+  id        String    @id @default(uuid())
+  name      String
+  data      String
+  authorId  Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  author User @relation(fields: [authorId], references: [id])
+
+  @@map("image")
 }

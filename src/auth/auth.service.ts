@@ -28,8 +28,7 @@ export class AuthService {
     const verifyHashPw = await bcrypt.compare(passwordDTO, user.password);
 
     if (!verifyHashPw) throw new BadRequestException();
-
-    const payload = { name: user.name, email: user.email };
+    const payload = { name: user.name, email: user.email, user_id: user.id };
     return {
       token_access: this.jwtService.sign(payload),
     };
