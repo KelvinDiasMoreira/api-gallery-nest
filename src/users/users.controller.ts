@@ -18,10 +18,13 @@ import { GetAllUsersUseCase } from './use-cases/get-all-users.use-case';
 import { EditUserPasswordUseCase } from './use-cases/edit-user-password.use-case';
 import { CreateUserUseCase } from './use-cases/create-user.use-case';
 import { DeleteUserUseCase } from './use-cases/delete-user.use-case';
-import { AuthGuard } from 'src/auth/auth.guard';
-
+import { AuthGuard } from '../auth/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
+@ApiTags('users')
 @Controller()
 export class UsersController {
+  
   constructor(
     private getUserByIdUseCase: GetUserByIdUseCase,
     private getAllUsersUseCase: GetAllUsersUseCase,
@@ -30,16 +33,10 @@ export class UsersController {
     private createUserUseCase: CreateUserUseCase,
     ) {}
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get('users')
   getAllUsers() {
     return this.getAllUsersUseCase.getAllUsers();
-  }
-
-  @UseGuards(AuthGuard)
-  @Get('users/:id')
-  getUserById(@Param('id') id: number) {
-    return this.getUserByIdUseCase.getUserById(id);
   }
 
   @Post('create')
@@ -48,14 +45,21 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
-  @Patch('edit/user/password/:id')
+  @Get('user/:id')
+  getUserById(@Param('id') id: number) {
+    return this.getUserByIdUseCase.getUserById(id);
+  }
+
+
+  @UseGuards(AuthGuard)
+  @Patch('user/password/:id')
   editUser(@Body() updatePasswordUserDTO: UpdatePasswordUserDTO, @Param('id') id: number) {
     return this.editUserPasswordUseCase.editUserPassword(updatePasswordUserDTO, id);
   }
 
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete('delete/:id')
+  @Delete('user/:id')
   deleteUser(@Param('id') id: number) {
     return this.deleteUserUseCase.deleteUser(id);
   }

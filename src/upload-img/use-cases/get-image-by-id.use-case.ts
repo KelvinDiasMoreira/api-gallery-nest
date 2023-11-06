@@ -10,15 +10,18 @@ interface IreqProps {
 }
 
 @Injectable()
-export class GetAllImagesPerUserUseCase {
+export class GetImageByIdUseCase {
     constructor(
         private prisma: PrismaService
     ) { }
 
-    async getAllImages(req: IreqProps) {
+    async getImageById(req: IreqProps, imageId: string) {
         const imagesByUser = await this.prisma.image.findMany({
             where: {
-                authorId: req.user_id
+                AND: [
+                    {authorId: req.user_id},
+                    {id: imageId}
+                ]
             },
         })
         if (!imagesByUser) throw new NotFoundException("Not images sended by user");

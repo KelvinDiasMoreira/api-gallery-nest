@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { PrismaService } from "src/database/prisma.service";
+import { PrismaService } from "../../database/prisma.service";
 
 interface IreqProps {
     name: string,
@@ -8,28 +8,25 @@ interface IreqProps {
     iat: number,
     exp: number
 }
-
-
-
 @Injectable()
 export class DeleteImagePerUserUseCase {
     constructor(
         private prisma: PrismaService
-    ) {}
+    ) { }
 
-    async deleteImagePerUser(req: IreqProps, id: string) {
+    async deleteImagePerUser(req: IreqProps, idImage: string) {
         const imagesByUser = await this.prisma.image.findMany({
             where: {
                 AND: [
                     { authorId: req.user_id },
-                    { id }
+                    { id: idImage }
                 ]
             },
         })
         if (!imagesByUser.length) throw new NotFoundException();
         await this.prisma.image.delete({
             where: {
-                id
+                id: idImage
             }
         })
         return

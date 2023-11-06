@@ -1,10 +1,11 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDTO } from '../dto/create-user.dto';
-import { PrismaService } from 'src/database/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { PrismaService } from '../../database/prisma.service';
 
 @Injectable()
 export class CreateUserUseCase {  
+
   constructor(private prisma: PrismaService){}
   
   private encriptPw = async (pw: string) => {
@@ -35,6 +36,11 @@ export class CreateUserUseCase {
         email,
       },
     });
-    return user;
+    return {
+      name: user.name,
+      login: user.login,
+      email: user.email,
+      createdAt: user.createdAt
+    };
   }
 }

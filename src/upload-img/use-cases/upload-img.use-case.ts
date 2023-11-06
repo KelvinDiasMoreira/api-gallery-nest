@@ -1,7 +1,7 @@
 import { Injectable, UnprocessableEntityException } from "@nestjs/common";
-import { PrismaService } from "src/database/prisma.service";
+import { PrismaService } from "../../database/prisma.service";
 
-interface IreqProps{
+interface IreqProps {
     name: string,
     email: string,
     user_id: number,
@@ -13,11 +13,12 @@ interface IreqProps{
 export class UploadImgUseCase {
     constructor(
         private prisma: PrismaService
-    ){}
+    ) { }
 
-    async uploadImg(file: Express.Multer.File, req: IreqProps){;
+    async uploadImg(file: Express.Multer.File, req: IreqProps) {
+        ;
 
-        if(file.mimetype !== 'image/png') throw new UnprocessableEntityException();
+        if (file.mimetype !== 'image/png') throw new UnprocessableEntityException();
 
         const fileInBase64 = file.buffer.toString('base64')
         const imageCreated = await this.prisma.image.create({

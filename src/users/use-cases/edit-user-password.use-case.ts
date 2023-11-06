@@ -1,5 +1,5 @@
-import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { PrismaService } from '../../database/prisma.service';
 import { UpdatePasswordUserDTO } from '../dto/update-user-password.dto';
 import * as bcrypt from 'bcrypt'
 
@@ -20,12 +20,12 @@ export class EditUserPasswordUseCase {
       where: { login },
     });
 
-    const isTheSamePassword = await bcrypt.compare(password, userToEditExist.password);
-
     if (!userToEditExist) throw new NotFoundException('User not found');
 
+    const isTheSamePassword = await bcrypt.compare(password, userToEditExist.password);
+    
     if(!isTheSamePassword) throw new UnauthorizedException();
-
+    
     const newPasswordHashed = await this.encriptPw(newPassword);
 
     return this.prisma.user.update({
