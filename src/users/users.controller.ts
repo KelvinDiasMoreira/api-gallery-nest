@@ -33,7 +33,7 @@ export class UsersController {
     private createUserUseCase: CreateUserUseCase,
     ) {}
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @Get('users')
   getAllUsers() {
     return this.getAllUsersUseCase.getAllUsers();
